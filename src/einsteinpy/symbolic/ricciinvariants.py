@@ -223,7 +223,7 @@ class FourthRicciInvariant(RicciScalar):
             parent_metric = riccitensor.parent_metric
 
         #tensor product of three mixed riccis
-        fourth_ricci = tensorproduct(*[ricci_mix]*3)
+        fourth_ricci = tensorproduct(*[ricci_mix]*4)
 
         #contracts over each pair accounding for the indices that are gone from last sum
         for i in ((0,7),(0,1),(0,1),(0,1)):
