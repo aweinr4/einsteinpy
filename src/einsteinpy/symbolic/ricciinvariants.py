@@ -1,6 +1,5 @@
 from einsteinpy.symbolic import BaseRelativityTensor,RicciTensor,RiemannCurvatureTensor,ChristoffelSymbols,RicciScalar
-from sympy import tensorproduct,tensorcontraction
-from einsteinpy.symbolic.helpers import simplify_sympy_array
+from sympy import tensorproduct,tensorcontraction,simplify
 
 
 class SecondRicciInvariant(RicciScalar):
@@ -8,14 +7,14 @@ class SecondRicciInvariant(RicciScalar):
     Class for defining Second Ricci Invariant, use Ricci Scalar as parent because from_christoffels and from_riemann will be same
     """
 
-    def __init__(self, arr, syms, parent_metric=None):
+    def __init__(self, expr, syms, parent_metric=None):
         """
         Constructor and Initializer
 
         Parameters
         ----------
-        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
-            Sympy Array, multi-dimensional list containing Sympy Expressions, or Sympy Expressions or int or float scalar
+        expr : ~sympy.core.expr.Expr or numbers.Number
+            Raw sympy expression
         syms : tuple or list
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
@@ -29,12 +28,11 @@ class SecondRicciInvariant(RicciScalar):
 
         """
         super(SecondRicciInvariant, self).__init__(
-            arr=arr,
+            expr=expr,
             syms=syms,
             parent_metric=parent_metric,
         )
         self.name = 'SecondRicciInvariant'
-        self._order = 0
 
 
     @classmethod
@@ -75,8 +73,11 @@ class SecondRicciInvariant(RicciScalar):
         second_ricci = tensorproduct(ricci_cov,ricci_con)
         for i in ((0,2),(0,1)):
             second_ricci = tensorcontraction(second_ricci, i)
+
+        
+
         return cls(
-            simplify_sympy_array(second_ricci),
+            simplify(second_ricci),
             riccitensor.syms,
             parent_metric=parent_metric,
         )
@@ -86,14 +87,14 @@ class ThirdRicciInvariant(RicciScalar):
     Class for defining Third Ricci Invariant
     """
 
-    def __init__(self, arr, syms, parent_metric=None):
+    def __init__(self, expr, syms, parent_metric=None):
         """
         Constructor and Initializer
 
         Parameters
         ----------
-        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
-            Sympy Array, multi-dimensional list containing Sympy Expressions, or Sympy Expressions or int or float scalar
+        expr : ~sympy.core.expr.Expr or numbers.Number
+            Raw sympy expression
         syms : tuple or list
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
@@ -107,12 +108,11 @@ class ThirdRicciInvariant(RicciScalar):
 
         """
         super(ThirdRicciInvariant, self).__init__(
-            arr=arr,
+            expr=expr,
             syms=syms,
             parent_metric=parent_metric,
         )
         self.name = 'ThirdRicciInvariant'
-        self._order = 0
 
 
     @classmethod
@@ -152,8 +152,10 @@ class ThirdRicciInvariant(RicciScalar):
         for i in ((0,5),(0,1),(0,1)):
             third_ricci = tensorcontraction(third_ricci, i)
 
+        
+
         return cls(
-            simplify_sympy_array(third_ricci),
+            simplify(third_ricci),
             riccitensor.syms,
             parent_metric=parent_metric,
         )
@@ -163,14 +165,14 @@ class FourthRicciInvariant(RicciScalar):
     Class for defining Fourth Ricci Invariant
     """
 
-    def __init__(self, arr, syms, parent_metric=None):
+    def __init__(self, expr, syms, parent_metric=None):
         """
         Constructor and Initializer
 
         Parameters
         ----------
-        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
-            Sympy Array, multi-dimensional list containing Sympy Expressions, or Sympy Expressions or int or float scalar
+        expr : ~sympy.core.expr.Expr or numbers.Number
+            Raw sympy expression
         syms : tuple or list
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
@@ -184,12 +186,11 @@ class FourthRicciInvariant(RicciScalar):
 
         """
         super(FourthRicciInvariant, self).__init__(
-            arr=arr,
+            expr=expr,
             syms=syms,
             parent_metric=parent_metric,
         )
         self.name = 'FourthRicciInvariant'
-        self._order = 0
 
 
     @classmethod
@@ -230,7 +231,7 @@ class FourthRicciInvariant(RicciScalar):
             fourth_ricci = tensorcontraction(fourth_ricci, i)
 
         return cls(
-            simplify_sympy_array(fourth_ricci),
+            simplify(fourth_ricci),
             riccitensor.syms,
             parent_metric=parent_metric,
         )

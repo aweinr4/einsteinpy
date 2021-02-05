@@ -1,22 +1,20 @@
-from einsteinpy.symbolic import (BaseRelativityTensor,RicciTensor,
-                                    RiemannCurvatureTensor,ChristoffelSymbols, WeylTensor)
+from einsteinpy.symbolic import (BaseRelativityScalar,RiemannCurvatureTensor,ChristoffelSymbols, WeylTensor)
 from sympy import tensorproduct,tensorcontraction,simplify
-from einsteinpy.symbolic.helpers import simplify_sympy_array
 
-class FirstWeylInvariant(BaseRelativityTensor):
+class FirstWeylInvariant(BaseRelativityScalar):
 
     """
     Class for defining First Weyl Invariant
     """
 
-    def __init__(self, arr, syms, parent_metric=None):
+    def __init__(self, expr, syms, parent_metric=None):
         """
         Constructor and Initializer
 
         Parameters
         ----------
-        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
-            Sympy Array, multi-dimensional list containing Sympy Expressions, or Sympy Expressions or int or float scalar
+        expr : ~sympy.core.expr.Expr or numbers.Number
+            Raw sympy expression
         syms : tuple or list
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
@@ -30,21 +28,12 @@ class FirstWeylInvariant(BaseRelativityTensor):
 
         """
         super(FirstWeylInvariant, self).__init__(
-            arr=arr,
+            expr=expr,
             syms=syms,
-            config="",
             parent_metric=parent_metric,
             name="FirstWeylInvariant",
         )
-        self._order = 0
 
-    @property
-    def expr(self):
-        """
-        Retuns the symbolic expression of the First Weyl Invariant
-        """
-        val = sum(self.arr)  # sympy not allowing indexing, temporary fix!
-        return val
 
     @classmethod
     def from_weyltensor(cls, weyl, parent_metric=None):
@@ -138,14 +127,14 @@ class ThirdWeylInvariant(FirstWeylInvariant):
     Class for defining Third Weyl Invariant
     """
 
-    def __init__(self, arr, syms, parent_metric=None):
+    def __init__(self, expr, syms, parent_metric=None):
         """
         Constructor and Initializer
 
         Parameters
         ----------
-        arr : ~sympy.tensor.array.dense_ndim_array.ImmutableDenseNDimArray or list
-            Sympy Array, multi-dimensional list containing Sympy Expressions, or Sympy Expressions or int or float scalar
+        expr : ~sympy.core.expr.Expr or numbers.Number
+            Raw sympy expression
         syms : tuple or list
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
@@ -159,11 +148,10 @@ class ThirdWeylInvariant(FirstWeylInvariant):
 
         """
         super(ThirdWeylInvariant, self).__init__(
-            arr=arr,
+            expr=expr,
             syms=syms,
             parent_metric=parent_metric,
         )
-        self._order = 0
         self.name="ThirdWeylInvariant"
 
     @classmethod
