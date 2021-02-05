@@ -47,14 +47,13 @@ class WeylTensor(BaseRelativityTensor):
             raise ValueError("config should be of length {}".format(self._order))
 
     @classmethod
-    def from_metric(cls, metric):
+    def from_riemann(cls, riemann,parent_metric = None):
         """
-        Get Weyl tensor calculated from a metric tensor
+        Get Weyl tensor calculated from a riemann tensor
 
         Parameters
         ----------
-        metric : ~einsteinpy.symbolic.metric.MetricTensor
-            Space-time Metric from which Christoffel Symbols are to be calculated
+        riemann : ~einsteinpy.symbolic.metric.RiemannCurvatureTensor
 
         Raises
         ------
@@ -62,14 +61,19 @@ class WeylTensor(BaseRelativityTensor):
             Raised when the dimension of the tensor is less than 3
 
         """
+        if parent_metric is None:
+            metric = riemann.parent_metric
+        else:
+            metric = parent_metric
         if metric.dims > 3:
-            metric_cov = metric.lower_config()
-            t_riemann = RiemannCurvatureTensor.from_metric(metric)
+            g = metric.lower_config()
+            t_ricci = RicciTensor.from_riemann(riemann, parent_metric=None)
+
             # Riemann Tensor with covariant indices is needed
-            t_riemann_cov = t_riemann.change_config("llll", metric=None)
-            t_ricci = RicciTensor.from_riemann(t_riemann, parent_metric=None)
+            if not riemann.config == 'llll':
+                riemann = riemann.change_config("llll", metric=None)
+            
             r_scalar = RicciScalar.from_riccitensor(t_ricci, parent_metric=None)
-            g = metric_cov
             dims = g.dims
             # Indexing for resultant Weyl Tensor is iklm
             C = np.zeros(shape=(dims, dims, dims, dims), dtype=int).tolist()
@@ -80,7 +84,7 @@ class WeylTensor(BaseRelativityTensor):
                     (int(t / (dims ** 2))) % (dims),
                     (int(t / (dims ** 3))) % (dims),
                 )
-                C[i][k][l][m] = t_riemann_cov[i, k, l, m] + (
+                C[i][k][l][m] = riemann[i, k, l, m] + (
                     (
                         (
                             t_ricci[i, m] * g[k, l]
@@ -97,13 +101,13 @@ class WeylTensor(BaseRelativityTensor):
                     )
                 )
             C = sympy.simplify(sympy.Array(C))
-            return cls(C, metric.syms, config="llll", parent_metric=metric)
+            return cls(C, riemann.syms, config="llll", parent_metric=metric)
         if metric.dims == 3:
             return cls(
                 sympy.Array(np.zeros((3, 3, 3, 3), dtype=int)),
-                metric.syms,
+                riemann.syms,
                 config="llll",
-                parent_metric=metric,
+                parent_metric=riemann.parent_metric,
             )
         raise ValueError("Dimension of the space/space-time should be 3 or more")
 
@@ -144,6 +148,20 @@ class WeylTensor(BaseRelativityTensor):
             name=_change_name(self.name, context="__" + newconfig),
         )
         return new_obj
+
+    @classmethod
+    def from_metric(cls, metric):
+        """
+        Get Weyl tensor calculated from Metric Tensor
+
+        Parameters
+        ----------
+        metric : ~einsteinpy.symbolic.metric.MetricTensor
+            Metric Tensor
+
+        """
+        riemann = RiemannCurvatureTensor.from_metric(metric)
+        return cls.from_riemann(riemann, parent_metric=None)
 
     def lorentz_transform(self, transformation_matrix):
         """
