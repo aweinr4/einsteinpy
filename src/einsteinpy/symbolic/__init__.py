@@ -3,8 +3,6 @@ from .constants import SymbolicConstant, get_constant
 from .einstein import EinsteinTensor
 from .helpers import TransformationMatrix, simplify_sympy_array
 from .metric import MetricTensor
-from .ricciinvariants import SecondRicciInvariant,ThirdRicciInvariant,FourthRicciInvariant
-from .kretschmann import KretschmannScalar
 from .predefined.alcubierre_warp import AlcubierreWarp
 from .predefined.barriola_vilenkin import BarriolaVilekin
 from .predefined.bertotti_kasner import BertottiKasner
@@ -30,6 +28,9 @@ from .stress_energy_momentum import StressEnergyMomentumTensor
 from .tensor import BaseRelativityTensor, Tensor
 from .vector import GenericVector
 from .weyl import WeylTensor
+from .ricciinvariants import SecondRicciInvariant,ThirdRicciInvariant,FourthRicciInvariant
+from .kretschmann import KretschmannScalar
+from .weylinvariants import FirstWeylInvariant,ThirdWeylInvariant
 
 __all__ = [
     "ChristoffelSymbols",
