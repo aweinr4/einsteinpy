@@ -1,4 +1,7 @@
-from einsteinpy.symbolic import (BaseRelativityScalar,RiemannCurvatureTensor,ChristoffelSymbols, WeylTensor)
+from einsteinpy.symbolic.scalars.scalar import BaseRelativityScalar
+from einsteinpy.symbolic.tensors.christoffel import ChristoffelSymbols
+from einsteinpy.symbolic.tensors.riemann import RiemannCurvatureTensor
+from einsteinpy.symbolic.tensors.weyl import WeylTensor
 from sympy import tensorproduct,tensorcontraction,simplify
 
 class FirstWeylInvariant(BaseRelativityScalar):

@@ -1,8 +1,9 @@
 import sympy
 
 from einsteinpy.symbolic.helpers import _change_name
-from einsteinpy.symbolic.ricci import RicciScalar, RicciTensor
-from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
+from einsteinpy.symbolic.tensors.ricci import RicciTensor
+from einsteinpy.symbolic.scalars.ricciinvariants import RicciScalar
+from einsteinpy.symbolic.tensors.tensor import BaseRelativityTensor, _change_config
 
 
 class EinsteinTensor(BaseRelativityTensor):

@@ -1,6 +1,6 @@
 from sympy import cos, cosh, diag, exp, sin, sinh, symbols
 
-from einsteinpy.symbolic.metric import MetricTensor
+from einsteinpy.symbolic.tensors.metric import MetricTensor
 
 
 def AntiDeSitter():

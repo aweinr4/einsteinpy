@@ -1,7 +1,7 @@
 from sympy import Function, Symbol, besselj, cos, diag, exp, sin, sqrt, symbols
 
 from einsteinpy.symbolic import constants
-from einsteinpy.symbolic.metric import MetricTensor
+from einsteinpy.symbolic.tensors.metric import MetricTensor
 
 
 def BesselGravitationalWave(C=symbols("C")):

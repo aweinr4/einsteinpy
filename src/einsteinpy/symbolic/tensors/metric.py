@@ -1,7 +1,7 @@
 import sympy
 
 from einsteinpy.symbolic.helpers import _change_name
-from einsteinpy.symbolic.tensor import BaseRelativityTensor
+from einsteinpy.symbolic.tensors.tensor import BaseRelativityTensor
 
 
 class MetricTensor(BaseRelativityTensor):

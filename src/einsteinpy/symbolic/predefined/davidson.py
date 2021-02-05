@@ -1,6 +1,6 @@
 from sympy import Rational, diag, symbols
 
-from einsteinpy.symbolic.metric import MetricTensor
+from einsteinpy.symbolic.tensors.metric import MetricTensor
 
 
 def Davidson():

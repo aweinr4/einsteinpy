@@ -1,7 +1,7 @@
 from sympy import diag, sin, symbols
 
 from einsteinpy.symbolic import constants
-from einsteinpy.symbolic.metric import MetricTensor
+from einsteinpy.symbolic.tensors.metric import MetricTensor
 
 
 def MinkowskiCartesian(c=constants.c):

@@ -1,17 +1,18 @@
-import numpy as np
-import sympy
-
 from einsteinpy.symbolic.helpers import _change_name
-from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
+from einsteinpy.symbolic.tensors.ricci import RicciTensor
+from einsteinpy.symbolic.scalars.ricciinvariants import RicciScalar
+from einsteinpy.symbolic.tensors.riemann import RiemannCurvatureTensor
+from einsteinpy.symbolic.tensors.tensor import BaseRelativityTensor, _change_config
 
 
-class ChristoffelSymbols(BaseRelativityTensor):
+class SchoutenTensor(BaseRelativityTensor):
     """
-    Class for defining christoffel symbols.
+    Class for defining Schouten Tensor
+
     """
 
     def __init__(
-        self, arr, syms, config="ull", parent_metric=None, name="ChristoffelSymbols"
+        self, arr, syms, config="ll", parent_metric=None, name="SchoutenTensor"
     ):
         """
         Constructor and Initializer
@@ -23,11 +24,11 @@ class ChristoffelSymbols(BaseRelativityTensor):
         syms : tuple or list
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         config : str
-            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ull'.
+            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
-            Metric Tensor from which Christoffel symbol is calculated. Defaults to None.
+            Corresponding Metric for the Schouten Tensor. Defaults to None.
         name : str
-            Name of the Christoffel Symbols Tensor. Defaults to "ChristoffelSymbols".
+            Name of the Tensor. Defaults to "SchoutenTensor".
 
         Raises
         ------
@@ -36,56 +37,51 @@ class ChristoffelSymbols(BaseRelativityTensor):
         TypeError
             syms is not a list or tuple
         ValueError
-            config has more or less than 3 indices
+            config has more or less than 2 indices
 
         """
-        super(ChristoffelSymbols, self).__init__(
+        super(SchoutenTensor, self).__init__(
             arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
         )
-        self._order = 3
-        if not len(self.config) == self._order:
+        self._order = 2
+        if not len(config) == self._order:
             raise ValueError("config should be of length {}".format(self._order))
 
     @classmethod
     def from_metric(cls, metric):
         """
-        Get Christoffel symbols calculated from a metric tensor
+        Get Schouten tensor calculated from a metric tensor
 
         Parameters
         ----------
         metric : ~einsteinpy.symbolic.metric.MetricTensor
             Space-time Metric from which Christoffel Symbols are to be calculated
 
-        """
-        dims = metric.dims
-        tmplist = np.zeros((dims, dims, dims), dtype=int).tolist()
-        mat, syms = metric.lower_config().tensor(), metric.symbols()
-        matinv = sympy.Matrix(mat.tolist()).inv()
-        for t in range(dims ** 3):
-            # i,j,k each goes from 0 to (dims-1)
-            # hack for codeclimate. Could be done with 3 nested for loops
-            k = t % dims
-            j = (int(t / dims)) % (dims)
-            i = (int(t / (dims ** 2))) % (dims)
-            if k <= j:
-                tmpvar = 0
-                for n in range(dims):
-                    tmpvar += (matinv[i, n] / 2) * (
-                        sympy.diff(mat[n, j], syms[k])
-                        + sympy.diff(mat[n, k], syms[j])
-                        - sympy.diff(mat[j, k], syms[n])
-                    )
-                tmplist[i][j][k] = tmplist[i][k][j] = tmpvar
-        return cls(tmplist, syms, config="ull", parent_metric=metric)
+        Raises
+        ------
+        ValueError
+            Raised when the dimension of the tensor is less than 3
 
-    def change_config(self, newconfig="lll", metric=None):
+        """
+        if metric.dims >= 3:
+            t_ricci = RicciTensor.from_metric(metric)
+            r_scalar = RicciScalar.from_riccitensor(t_ricci, parent_metric=None)
+            dims = metric.dims
+            t_schouten = (
+                t_ricci.tensor()
+                - (r_scalar.expr * metric.lower_config().tensor() / (2 * (dims - 1)))
+            ) / (dims - 2)
+            return cls(t_schouten, metric.syms, config="ll", parent_metric=metric)
+        raise ValueError("Dimension of the space/space-time should be 3 or more")
+
+    def change_config(self, newconfig="ul", metric=None):
         """
         Changes the index configuration(contravariant/covariant)
 
         Parameters
         ----------
         newconfig : str
-            Specify the new configuration. Defaults to 'lll'
+            Specify the new configuration. Defaults to 'ul'
         metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Parent metric tensor for changing indices.
             Already assumes the value of the metric tensor from which it was initialized if passed with None.
@@ -93,8 +89,8 @@ class ChristoffelSymbols(BaseRelativityTensor):
 
         Returns
         -------
-        ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
-            New tensor with new configuration. Defaults to 'lll'
+        ~einsteinpy.symbolic.schouten.SchoutenTensor
+            New tensor with new configuration. Configuration defaults to 'ul'
 
         Raises
         ------
@@ -107,7 +103,7 @@ class ChristoffelSymbols(BaseRelativityTensor):
         if metric is None:
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
-        new_obj = ChristoffelSymbols(
+        new_obj = SchoutenTensor(
             new_tensor,
             self.syms,
             config=newconfig,
@@ -127,12 +123,12 @@ class ChristoffelSymbols(BaseRelativityTensor):
 
         Returns
         -------
-            ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
+            ~einsteinpy.symbolic.schouten.SchoutenTensor
                 lorentz transformed tensor
 
         """
-        t = super(ChristoffelSymbols, self).lorentz_transform(transformation_matrix)
-        return ChristoffelSymbols(
+        t = super(SchoutenTensor, self).lorentz_transform(transformation_matrix)
+        return SchoutenTensor(
             t.tensor(),
             syms=self.syms,
             config=self._config,

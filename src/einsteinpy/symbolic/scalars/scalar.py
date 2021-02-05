@@ -1,6 +1,6 @@
 import numbers
 import sympy as sp
-from einsteinpy.symbolic import MetricTensor
+from einsteinpy.symbolic.tensors.metric import MetricTensor
 from sympy.core.function import AppliedUndef, UndefinedFunction
 
    

@@ -1,37 +1,16 @@
-from .christoffel import ChristoffelSymbols
+from .tensors.metric import MetricTensor
 from .constants import SymbolicConstant, get_constant
 from .helpers import TransformationMatrix, simplify_sympy_array
-from .metric import MetricTensor
-from .predefined.alcubierre_warp import AlcubierreWarp
-from .predefined.barriola_vilenkin import BarriolaVilekin
-from .predefined.bertotti_kasner import BertottiKasner
-from .predefined.bessel_gravitational_wave import BesselGravitationalWave
-from .predefined.cmetric import CMetric
-from .predefined.davidson import Davidson
-from .predefined.de_sitter import AntiDeSitter, AntiDeSitterStatic, DeSitter
-from .predefined.ernst import Ernst
-from .predefined.find import find
-from .predefined.godel import Godel
-from .predefined.janis_newman_winicour import JanisNewmanWinicour
-from .predefined.minkowski import Minkowski, MinkowskiCartesian, MinkowskiPolar
-from .predefined.vacuum_solutions import (
-    Kerr,
-    KerrNewman,
-    ReissnerNordstorm,
-    Schwarzschild,
-)
-from .ricci import RicciScalar, RicciTensor
-from .riemann import RiemannCurvatureTensor
-from .schouten import SchoutenTensor
-from .stress_energy_momentum import StressEnergyMomentumTensor
-from .tensor import BaseRelativityTensor, Tensor
-from .scalar import BaseRelativityScalar,Scalar
+from .predefined import (AlcubierreWarp,BarriolaVilekin,BertottiKasner,BesselGravitationalWave,CMetric,
+                        Davidson,AntiDeSitter, AntiDeSitterStatic, DeSitter,Ernst,find,Godel,JanisNewmanWinicour,
+                        Minkowski, MinkowskiCartesian, MinkowskiPolar, Kerr,KerrNewman,ReissnerNordstorm,Schwarzschild)
 from .vector import GenericVector
-from .weyl import WeylTensor
-from .ricciinvariants import SecondRicciInvariant,ThirdRicciInvariant,FourthRicciInvariant
-from .kretschmann import KretschmannScalar
-from .weylinvariants import FirstWeylInvariant,ThirdWeylInvariant
-from .einstein import EinsteinTensor
+from .tensors import (RicciTensor,RiemannCurvatureTensor,
+                        SchoutenTensor,StressEnergyMomentumTensor,BaseRelativityTensor, 
+                        Tensor,WeylTensor,EinsteinTensor,ChristoffelSymbols)
+from .scalars import (SecondRicciInvariant,ThirdRicciInvariant,FourthRicciInvariant,
+                            KretschmannScalar,FirstWeylInvariant,ThirdWeylInvariant, RicciScalar,
+                            Scalar,BaseRelativityScalar)
 
 __all__ = [
     "ChristoffelSymbols",

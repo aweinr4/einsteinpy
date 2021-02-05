@@ -1,7 +1,7 @@
 from sympy import diag, sqrt, symbols, tanh
 
 from einsteinpy.symbolic import constants
-from einsteinpy.symbolic.metric import MetricTensor
+from einsteinpy.symbolic.tensors.metric import MetricTensor
 
 
 def AlcubierreWarp(
@@ -47,6 +47,6 @@ def AlcubierreWarp(
     f2 = f ** 2
 
     metric = diag(v2 * f2 - 1, 1, 1, 1).tolist()
-    metric[0][1] = metric[1][0] = -v * f
+    metric[0][1] = metric[1][0] = -1 * v * f
 
     return MetricTensor(metric, coords, "ll", name="AlcubierreWarpMetric")

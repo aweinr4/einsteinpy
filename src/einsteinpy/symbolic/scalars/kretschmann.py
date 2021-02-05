@@ -1,4 +1,6 @@
-from einsteinpy.symbolic import BaseRelativityTensor,RiemannCurvatureTensor,ChristoffelSymbols
+from einsteinpy.symbolic.tensors.tensor import BaseRelativityTensor
+from einsteinpy.symbolic.tensors.christoffel import ChristoffelSymbols
+from einsteinpy.symbolic.tensors.riemann import RiemannCurvatureTensor
 from sympy import tensorproduct,tensorcontraction
 from einsteinpy.symbolic.helpers import simplify_sympy_array
 

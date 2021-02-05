@@ -1,6 +1,123 @@
-from einsteinpy.symbolic import BaseRelativityTensor,RicciTensor,RiemannCurvatureTensor,ChristoffelSymbols,RicciScalar
+from einsteinpy.symbolic.scalars.scalar import BaseRelativityScalar
+from einsteinpy.symbolic.tensors.riemann import RiemannCurvatureTensor
+from einsteinpy.symbolic.tensors.ricci import RicciTensor
+from einsteinpy.symbolic.tensors.christoffel import ChristoffelSymbols
 from sympy import tensorproduct,tensorcontraction,simplify
 
+class RicciScalar(BaseRelativityScalar):
+    """
+    Class for defining Ricci Scalar
+    """
+
+    def __init__(self, expr, syms, parent_metric=None):
+        """
+        Constructor and Initializer
+
+        Parameters
+        ----------
+        expr : ~sympy.core.expr.Expr or numbers.Number
+            Raw sympy expression
+        syms : tuple or list
+            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Corresponding Metric for the Ricci Scalar.
+            Defaults to None.
+
+        Raises
+        ------
+        TypeError
+            Raised when syms is not a list or tuple
+
+        """
+        super(RicciScalar, self).__init__(
+            expr=expr,
+            syms=syms,
+            parent_metric=parent_metric,
+            name="RicciScalar",
+        )
+        self._order = 0
+
+
+    @classmethod
+    def from_riccitensor(cls, riccitensor, parent_metric=None):
+        """
+        Get Ricci Scalar calculated from Ricci Tensor
+
+        Parameters
+        ----------
+        riccitensor: ~einsteinpy.symbolic.metric.RicciTensor
+            Ricci Tensor
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Corresponding Metric for the Ricci Scalar.
+            Defaults to None.
+
+        """
+
+        if not riccitensor.config == "ul":
+            riccitensor = riccitensor.change_config(
+                newconfig="ul", metric=parent_metric
+            )
+        if parent_metric is None:
+            parent_metric = riccitensor.parent_metric
+        ricci_scalar = tensorcontraction(riccitensor.tensor(), (0, 1))
+
+
+        return cls(
+            simplify(ricci_scalar),
+            riccitensor.syms,
+            parent_metric=parent_metric,
+        )
+
+    @classmethod
+    def from_riemann(cls, riemann, parent_metric=None):
+        """
+        Get Ricci Scalar calculated from Riemann Tensor
+
+        Parameters
+        ----------
+        riemann : ~einsteinpy.symbolic.riemann.RiemannCurvatureTensor
+           Riemann Tensor
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Corresponding Metric for the Ricci Scalar.
+            Defaults to None.
+
+        """
+
+        cg = RicciTensor.from_riemann(riemann, parent_metric=parent_metric)
+        return cls.from_riccitensor(cg)
+
+    @classmethod
+    def from_christoffels(cls, chris, parent_metric=None):
+        """
+        Get Ricci Scalar calculated from Christoffel Tensor
+
+        Parameters
+        ----------
+        chris : ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
+            Christoffel Tensor
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Corresponding Metric for the Ricci Scalar.
+            Defaults to None.
+
+        """
+        rt = RiemannCurvatureTensor.from_christoffels(
+            chris, parent_metric=parent_metric
+        )
+        return cls.from_riemann(rt)
+
+    @classmethod
+    def from_metric(cls, metric):
+        """
+        Get Ricci Scalar calculated from Metric Tensor
+
+        Parameters
+        ----------
+        metric : ~einsteinpy.symbolic.metric.MetricTensor
+            Metric Tensor
+
+        """
+        ch = ChristoffelSymbols.from_metric(metric)
+        return cls.from_christoffels(ch, parent_metric=None)
 
 class SecondRicciInvariant(RicciScalar):
     """

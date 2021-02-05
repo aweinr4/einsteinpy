@@ -1,10 +1,12 @@
+from mpmath.functions.functions import im
 import numpy as np
 import sympy
 
 from einsteinpy.symbolic.helpers import _change_name
-from einsteinpy.symbolic.ricci import RicciScalar, RicciTensor
-from einsteinpy.symbolic.riemann import RiemannCurvatureTensor
-from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
+from einsteinpy.symbolic.tensors.riemann import RiemannCurvatureTensor
+from einsteinpy.symbolic.tensors.ricci import RicciTensor
+from einsteinpy.symbolic.scalars.ricciinvariants import RicciScalar
+from einsteinpy.symbolic.tensors.tensor import  _change_config,BaseRelativityTensor
 
 
 class WeylTensor(BaseRelativityTensor):

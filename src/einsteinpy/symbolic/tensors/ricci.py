@@ -1,24 +1,19 @@
-import numpy as np
 import sympy
+from sympy import tensorcontraction, tensorproduct,simplify
 
-from einsteinpy.symbolic.christoffel import ChristoffelSymbols
-from einsteinpy.symbolic.helpers import _change_name
-from einsteinpy.symbolic.tensor import BaseRelativityTensor, _change_config
+from einsteinpy.symbolic.tensors .christoffel import ChristoffelSymbols
+from einsteinpy.symbolic.helpers import _change_name, simplify_sympy_array
+from einsteinpy.symbolic.tensors.metric import MetricTensor
+from einsteinpy.symbolic.tensors.riemann import RiemannCurvatureTensor
+from einsteinpy.symbolic.tensors.tensor import BaseRelativityTensor, _change_config
 
 
-class RiemannCurvatureTensor(BaseRelativityTensor):
+class RicciTensor(BaseRelativityTensor):
     """
-    Class for defining Riemann Curvature Tensor
+    Class for defining Ricci Tensor
     """
 
-    def __init__(
-        self,
-        arr,
-        syms,
-        config="ulll",
-        parent_metric=None,
-        name="RiemannCurvatureTensor",
-    ):
+    def __init__(self, arr, syms, config="ll", parent_metric=None, name="RicciTensor"):
         """
         Constructor and Initializer
 
@@ -29,11 +24,12 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
         syms : tuple or list
             Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
         config : str
-            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'ulll'.
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor
-            Metric Tensor related to this Riemann Curvature Tensor.
+            Configuration of contravariant and covariant indices in tensor. 'u' for upper and 'l' for lower indices. Defaults to 'll'.
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Corresponding Metric for the Ricci Tensor.
+            Defaults to None.
         name : str
-            Name of the Tensor. Defaults to "RiemannCurvatureTensor".
+            Name of the Tensor. Defaults to "RicciTensor".
 
         Raises
         ------
@@ -42,82 +38,93 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
         TypeError
             syms is not a list or tuple
         ValueError
-            config has more or less than 4 indices
+            config has more or less than 2 indices
 
         """
-        super(RiemannCurvatureTensor, self).__init__(
+        super(RicciTensor, self).__init__(
             arr=arr, syms=syms, config=config, parent_metric=parent_metric, name=name
         )
-        self._order = 4
+        self._order = 2
         if not len(config) == self._order:
             raise ValueError("config should be of length {}".format(self._order))
 
     @classmethod
+    def from_riemann(cls, riemann, parent_metric=None):
+        """
+        Get Ricci Tensor calculated from Riemann Tensor
+
+        Parameters
+        ----------
+        riemann : ~einsteinpy.symbolic.riemann.RiemannCurvatureTensor
+           Riemann Tensor
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Corresponding Metric for the Ricci Tensor.
+            None if it should inherit the Parent Metric of Riemann Tensor.
+            Defaults to None.
+
+        """
+        if not riemann.config == "ulll":
+            riemann = riemann.change_config(newconfig="ulll", metric=parent_metric)
+        if parent_metric is None:
+            parent_metric = riemann.parent_metric
+        return cls(
+            simplify_sympy_array(sympy.tensorcontraction(riemann.tensor(), (0, 2))),
+            riemann.syms,
+            config="ll",
+            parent_metric=parent_metric,
+        )
+
+    @classmethod
     def from_christoffels(cls, chris, parent_metric=None):
         """
-        Get Riemann Tensor calculated from a Christoffel Symbols
+        Get Ricci Tensor calculated from Christoffel Tensor
 
         Parameters
         ----------
         chris : ~einsteinpy.symbolic.christoffel.ChristoffelSymbols
-            Christoffel Symbols from which Riemann Curvature Tensor to be calculated
+            Christoffel Tensor
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the Riemann Tensor.
+            Corresponding Metric for the Ricci Tensor.
             None if it should inherit the Parent Metric of Christoffel Symbols.
             Defaults to None.
 
         """
-        if not chris.config == "ull":
-            chris = chris.change_config(newconfig="ull", metric=parent_metric)
-        arr, syms = chris.tensor(), chris.symbols()
-        dims = len(syms)
-        riemann_list = (np.zeros(shape=(dims, dims, dims, dims), dtype=int)).tolist()
-        for i in range(dims ** 4):
-            # t,s,r,n each goes from 0 to (dims-1)
-            # hack for codeclimate. Could be done with 4 nested for loops
-            n = i % dims
-            r = (int(i / dims)) % (dims)
-            s = (int(i / (dims ** 2))) % (dims)
-            t = (int(i / (dims ** 3))) % (dims)
-            temp = sympy.diff(arr[t, s, n], syms[r]) - sympy.diff(arr[t, s, r], syms[n])
-            for p in range(dims):
-                temp += arr[p, s, n] * arr[t, p, r] - arr[p, s, r] * arr[t, p, n]
-            riemann_list[t][s][r][n] = sympy.simplify(temp)
-        if parent_metric is None:
-            parent_metric = chris.parent_metric
-        return cls(riemann_list, syms, config="ulll", parent_metric=parent_metric)
+        rt = RiemannCurvatureTensor.from_christoffels(
+            chris, parent_metric=parent_metric
+        )
+        return cls.from_riemann(rt)
 
     @classmethod
     def from_metric(cls, metric):
         """
-        Get Riemann Tensor calculated from a Metric Tensor
+        Get Ricci Tensor calculated from Metric Tensor
 
         Parameters
         ----------
         metric : ~einsteinpy.symbolic.metric.MetricTensor
-            Metric Tensor from which Riemann Curvature Tensor to be calculated
+            Metric Tensor
 
         """
         ch = ChristoffelSymbols.from_metric(metric)
         return cls.from_christoffels(ch, parent_metric=None)
 
-    def change_config(self, newconfig="llll", metric=None):
+    def change_config(self, newconfig="ul", metric=None):
         """
         Changes the index configuration(contravariant/covariant)
 
         Parameters
         ----------
         newconfig : str
-            Specify the new configuration. Defaults to 'llll'
+            Specify the new configuration. Defaults to 'ul'
         metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Parent metric tensor for changing indices.
             Already assumes the value of the metric tensor from which it was initialized if passed with None.
-            Compulsory if not initialized with 'from_metric'. Defaults to None.
+            Compulsory if somehow does not have a parent metric. Defaults to None.
 
         Returns
         -------
-        ~einsteinpy.symbolic.riemann.RiemannCurvatureTensor
-            New tensor with new configuration. Configuration defaults to 'llll'
+        ~einsteinpy.symbolic.ricci.RicciTensor
+            New tensor with new configuration. Defaults to 'ul'
 
         Raises
         ------
@@ -130,7 +137,7 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
         if metric is None:
             raise Exception("Parent Metric not found, can't do configuration change")
         new_tensor = _change_config(self, metric, newconfig)
-        new_obj = RiemannCurvatureTensor(
+        new_obj = RicciTensor(
             new_tensor,
             self.syms,
             config=newconfig,
@@ -150,12 +157,12 @@ class RiemannCurvatureTensor(BaseRelativityTensor):
 
         Returns
         -------
-            ~einsteinpy.symbolic.riemann.RiemannCurvatureTensor
+            ~einsteinpy.symbolic.ricci.RicciTensor
                 lorentz transformed tensor
 
         """
-        t = super(RiemannCurvatureTensor, self).lorentz_transform(transformation_matrix)
-        return RiemannCurvatureTensor(
+        t = super(RicciTensor, self).lorentz_transform(transformation_matrix)
+        return RicciTensor(
             t.tensor(),
             syms=self.syms,
             config=self._config,
