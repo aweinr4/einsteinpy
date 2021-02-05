@@ -63,6 +63,32 @@ def sympy_to_np_array(arr):
     """
     return np.array(arr.tolist()).reshape(arr.shape)
 
+def unique(tensor,return_index = False):
+    '''
+    used to extract all non zero values from a tensor, if return index is true then indices are returned along with values
+    '''
+    all_values = np.asarray(tensor.tensor())
+    shape = all_values.shape
+    indices = []
+    vals = []
+    for n,i in enumerate(all_values.flatten()):
+        if i == 0:
+            pass
+        else:
+            is_unique = True
+            for j in vals:
+                if sympy.simplify(i==j):
+                    is_unique = False
+                    break
+            if is_unique:
+                index = [*np.unravel_index(n,shape = shape)]
+                vals.append(i)
+                indices.append(index)
+    if return_index:
+        
+        return vals,indices
+    else:
+        return vals
 
 class TransformationMatrix(ImmutableDenseNDimArray):
     """
@@ -207,30 +233,5 @@ def _change_name(curr_name: str, context: str) -> str:
     """
     return curr_name + context if (curr_name is not None) else None
 
-def unique(tensor,return_index = False):
-    '''
-    used to extract all non zero values from a tensor, if return index is true then indices are returned along with values
-    '''
-    all_values = np.asarray(tensor.tensor())
-    shape = all_values.shape
-    indices = []
-    vals = []
-    for n,i in enumerate(all_values.flatten()):
-        is_unique = True
-        if i == 0:
-            is_unique = False
-        else:
-            for j in vals:
-                if sp.simplify(i==j):
-                    in_unique = False
-                    break
-            if is_unique:
-                index = np.unravel_index(n,shape = shape)
-                vals.append(i)
-                indices.append(index)
-    if return_index:
-        
-        return vals,indices
-    else:
-        return vals
+
         
