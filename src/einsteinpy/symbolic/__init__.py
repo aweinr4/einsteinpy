@@ -7,10 +7,11 @@ from .predefined import (AlcubierreWarp,BarriolaVilekin,BertottiKasner,BesselGra
 from .vector import GenericVector
 from .tensors import (RicciTensor,RiemannCurvatureTensor,
                         SchoutenTensor,StressEnergyMomentumTensor,BaseRelativityTensor, 
-                        Tensor,WeylTensor,EinsteinTensor,ChristoffelSymbols,LeviCivitaSymbols)
+                        Tensor,WeylTensor,EinsteinTensor,ChristoffelSymbols,LeviCivitaSymbols,
+                        DualWeylTensor)
 from .scalars import (SecondRicciInvariant,ThirdRicciInvariant,FourthRicciInvariant,
-                            KretschmannScalar,FirstWeylInvariant,ThirdWeylInvariant, RicciScalar,
-                            Scalar,BaseRelativityScalar)
+                            KretschmannScalar,FirstWeylInvariant,SecondWeylInvariant,
+                            ThirdWeylInvariant, RicciScalar,Scalar,BaseRelativityScalar)
 
 __all__ = [
     "ChristoffelSymbols",

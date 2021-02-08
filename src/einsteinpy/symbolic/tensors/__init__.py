@@ -6,5 +6,5 @@ from .ricci import RicciTensor
 from .schouten import SchoutenTensor
 from .einstein import EinsteinTensor
 from .stress_energy_momentum import StressEnergyMomentumTensor
-from .weyl import WeylTensor
+from .weyl import WeylTensor,DualWeylTensor
 from .levicivita import LeviCivitaSymbols

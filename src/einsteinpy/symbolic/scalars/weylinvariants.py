@@ -1,7 +1,7 @@
 from einsteinpy.symbolic.scalars.scalar import BaseRelativityScalar
 from einsteinpy.symbolic.tensors.christoffel import ChristoffelSymbols
 from einsteinpy.symbolic.tensors.riemann import RiemannCurvatureTensor
-from einsteinpy.symbolic.tensors.weyl import WeylTensor
+from einsteinpy.symbolic.tensors.weyl import WeylTensor,DualWeylTensor
 from sympy import tensorproduct,tensorcontraction,simplify
 
 class FirstWeylInvariant(BaseRelativityScalar):
@@ -124,6 +124,81 @@ class FirstWeylInvariant(BaseRelativityScalar):
         """
         ch = ChristoffelSymbols.from_metric(metric)
         return cls.from_christoffels(ch, parent_metric=None)
+
+class SecondWeylInvariant(FirstWeylInvariant):
+    """
+    Class for defining Second Weyl Invariant
+    """
+
+    def __init__(self, expr, syms, parent_metric=None):
+        """
+        Constructor and Initializer
+
+        Parameters
+        ----------
+        expr : ~sympy.core.expr.Expr or numbers.Number
+            Raw sympy expression
+        syms : tuple or list
+            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Corresponding Metric for the Second Weyl Invariant.
+            Defaults to None.
+
+        Raises
+        ------
+        TypeError
+            Raised when syms is not a list or tuple
+
+        """
+        super(SecondWeylInvariant, self).__init__(
+            expr=expr,
+            syms=syms,
+            parent_metric=parent_metric,
+        )
+        self.name="SecondWeylInvariant"
+
+    @classmethod
+    def from_weyltensor(cls, weyl, parent_metric=None):
+        """
+        Get Second Weyl Invariant calculated from Ricci Tensor equation given by:
+
+        ..math:: 
+                C_{ij}{}^{kl}{}\\star{C_{kl}{}^{ij}{}}
+        
+        where \\star{C} is the dual of the weyl tensor
+
+        Parameters
+        ----------
+        weyltensor: ~einsteinpy.symbolic.metric.WeylTensor
+            Weyl Tensor
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Corresponding Metric for the Second Weyl Invariant.
+            Defaults to None.
+
+        """
+
+        weyl_dual = DualWeylTensor.from_weyltensor(weyl).change_config('lluu')
+
+        if not weyl.config == "lluu":
+            weyl = weyl.change_config(
+                newconfig="lluu", metric=parent_metric
+            )
+
+        if parent_metric is None:
+            parent_metric = weyl.parent_metric
+        
+        
+        second_weyl = tensorproduct(-1*weyl.tensor(),weyl_dual.tensor())
+        for i in ((0,6),(0,5),(0,2),(0,1)):
+
+            second_weyl = tensorcontraction(second_weyl, i)
+        
+        
+        return cls(
+            simplify(second_weyl),
+            weyl.syms,
+            parent_metric=parent_metric,
+        )
 
 class ThirdWeylInvariant(FirstWeylInvariant):
     """
