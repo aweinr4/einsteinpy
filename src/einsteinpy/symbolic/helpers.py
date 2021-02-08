@@ -63,6 +63,20 @@ def sympy_to_np_array(arr):
     """
     return np.array(arr.tolist()).reshape(arr.shape)
 
+def perm_parity(arr):
+    '''finds the parity of a permutation, usefull for creating the levi civita symbols'''
+    inversions = 0
+    for n,i in enumerate(arr):
+        for j in arr[n+1:]:
+            if j < i:
+                inversions+=1
+            elif j == i:
+                return 0
+    if inversions%2:
+        return -1
+    else:
+        return 1
+
 def unique(tensor,return_index = False):
     '''
     used to extract all non zero values from a tensor, if return index is true then indices are returned along with values
