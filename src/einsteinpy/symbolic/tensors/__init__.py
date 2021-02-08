@@ -7,3 +7,4 @@ from .schouten import SchoutenTensor
 from .einstein import EinsteinTensor
 from .stress_energy_momentum import StressEnergyMomentumTensor
 from .weyl import WeylTensor
+from .levicivita import LeviCivitaSymbols

@@ -7,7 +7,7 @@ from .predefined import (AlcubierreWarp,BarriolaVilekin,BertottiKasner,BesselGra
 from .vector import GenericVector
 from .tensors import (RicciTensor,RiemannCurvatureTensor,
                         SchoutenTensor,StressEnergyMomentumTensor,BaseRelativityTensor, 
-                        Tensor,WeylTensor,EinsteinTensor,ChristoffelSymbols)
+                        Tensor,WeylTensor,EinsteinTensor,ChristoffelSymbols,LeviCivitaSymbols)
 from .scalars import (SecondRicciInvariant,ThirdRicciInvariant,FourthRicciInvariant,
                             KretschmannScalar,FirstWeylInvariant,ThirdWeylInvariant, RicciScalar,
                             Scalar,BaseRelativityScalar)
