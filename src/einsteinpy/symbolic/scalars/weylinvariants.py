@@ -48,7 +48,7 @@ class FirstWeylInvariant(BaseRelativityScalar):
 
         Parameters
         ----------
-        weyltensor: ~einsteinpy.symbolic.metric.WeylTensor
+        weyltensor: ~einsteinpy.symbolic.tensors.weyl.WeylTensor
             Weyl Tensor
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the First Weyl Invariant.
@@ -160,16 +160,16 @@ class SecondWeylInvariant(FirstWeylInvariant):
     @classmethod
     def from_weyltensor(cls, weyl, parent_metric=None):
         """
-        Get Second Weyl Invariant calculated from Ricci Tensor equation given by:
+        Get Second Weyl Invariant calculated from weyl Tensor equation given by:
 
         ..math:: 
-                C_{ij}{}^{kl}{}\\star{C_{kl}{}^{ij}{}}
+                -C_{ij}{}^{kl}{}\\star{C}_{kl}{}^{ij}{}
         
         where \\star{C} is the dual of the weyl tensor
 
         Parameters
         ----------
-        weyltensor: ~einsteinpy.symbolic.metric.WeylTensor
+        weyltensor: ~einsteinpy.symbolic.tensors.weyl.WeylTensor
             Weyl Tensor
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Second Weyl Invariant.
@@ -201,6 +201,7 @@ class SecondWeylInvariant(FirstWeylInvariant):
         )
 
 class ThirdWeylInvariant(FirstWeylInvariant):
+
     """
     Class for defining Third Weyl Invariant
     """
@@ -235,14 +236,14 @@ class ThirdWeylInvariant(FirstWeylInvariant):
     @classmethod
     def from_weyltensor(cls, weyl, parent_metric=None):
         """
-        Get Third Weyl Invariant calculated from Ricci Tensor equation given by:
+        Get Third Weyl Invariant calculated from weyl Tensor equation given by:
 
         ..math:: 
                 C_{ij}{}^{kl}{}C_{kl}{}^{op}{}C_{op}{}^{}{ij}
 
         Parameters
         ----------
-        weyltensor: ~einsteinpy.symbolic.metric.WeylTensor
+        weyltensor: ~einsteinpy.symbolic.tensors.weyl.WeylTensor
             Weyl Tensor
         parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
             Corresponding Metric for the Third Weyl Invariant.
@@ -271,6 +272,87 @@ class ThirdWeylInvariant(FirstWeylInvariant):
         
         return cls(
             simplify(third_weyl),
+            weyl.syms,
+            parent_metric=parent_metric,
+        )
+
+class FourthWeylInvariant(FirstWeylInvariant):
+    """
+    Class for defining Fourth Weyl Invariant
+    """
+
+    def __init__(self, expr, syms, parent_metric=None):
+        """
+        Constructor and Initializer
+
+        Parameters
+        ----------
+        expr : ~sympy.core.expr.Expr or numbers.Number
+            Raw sympy expression
+        syms : tuple or list
+            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
+        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
+            Corresponding Metric for the Fourth Weyl Invariant.
+            Defaults to None.
+
+        Raises
+        ------
+        TypeError
+            Raised when syms is not a list or tuple
+
+        """
+        super(FourthWeylInvariant, self).__init__(
+            expr=expr,
+            syms=syms,
+            parent_metric=parent_metric,
+        )
+        self.name="FourthWeylInvariant"
+
+    @classmethod
+    def from_weyltensor(cls, weyl, parent_metric=None):
+        """
+        Get Fourth Weyl Invariant calculated from weyl Tensor equation given by:
+
+        ..math:: 
+                -C_{ij}{}^{kl}{}\\star{C}_{kl}{}^{op}{}C_{op}{}^{ij}{}
+        
+        where \\star{C} is the dual of the weyl tensor
+
+        Parameters
+        ----------
+        weyltensor: ~einsteinpy.symbolic.tensors.weyl.WeylTensor
+            Weyl Tensor
+        parent_metric : ~einsteinpy.symbolic.tensors.metric.MetricTensor or None
+            Corresponding Metric for the Fourth Weyl Invariant.
+            Defaults to None.
+
+        """
+
+        weyl_dual = DualWeylTensor.from_weyltensor(weyl).change_config('lluu')
+
+        if not weyl.config == "lluu":
+            weyl = weyl.change_config(
+                newconfig="lluu", metric=parent_metric
+            )
+
+        if parent_metric is None:
+            parent_metric = weyl.parent_metric
+        
+        '''take first product then contract two indices and then take another product. 
+         This prevents large tensor from slowing computation'''
+        fourth_weyl = tensorproduct(-1*weyl_dual.tensor(),weyl.tensor())
+        for i in ((2,4),(2,3)):
+
+            fourth_weyl = tensorcontraction(fourth_weyl, i)
+
+        fourth_weyl = tensorproduct(weyl.tensor(),fourth_weyl)
+        for i in ((0,6),(0,5),(0,2),(0,1)):
+
+            fourth_weyl = tensorcontraction(fourth_weyl, i)
+
+        
+        return cls(
+            simplify(fourth_weyl),
             weyl.syms,
             parent_metric=parent_metric,
         )

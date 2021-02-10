@@ -11,7 +11,8 @@ from .tensors import (RicciTensor,RiemannCurvatureTensor,
                         DualWeylTensor)
 from .scalars import (SecondRicciInvariant,ThirdRicciInvariant,FourthRicciInvariant,
                             KretschmannScalar,FirstWeylInvariant,SecondWeylInvariant,
-                            ThirdWeylInvariant, RicciScalar,Scalar,BaseRelativityScalar)
+                            ThirdWeylInvariant, RicciScalar,Scalar,BaseRelativityScalar,
+                            FourthWeylInvariant)
 
 __all__ = [
     "ChristoffelSymbols",

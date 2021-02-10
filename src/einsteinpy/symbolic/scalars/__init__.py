@@ -1,4 +1,4 @@
 from .kretschmann import KretschmannScalar
 from .ricciinvariants import RicciScalar,SecondRicciInvariant,ThirdRicciInvariant,FourthRicciInvariant
-from .weylinvariants import FirstWeylInvariant,SecondWeylInvariant,ThirdWeylInvariant
+from .weylinvariants import FirstWeylInvariant,SecondWeylInvariant,ThirdWeylInvariant,FourthWeylInvariant
 from .scalar import Scalar,BaseRelativityScalar
