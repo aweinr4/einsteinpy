@@ -71,8 +71,8 @@ def tensor_product(tensor1, tensor2, i=None, j=None):
 
     Parameters
     ----------
-    tensor1 : ~einsteinpy.symbolic.BaseRelativityTensor
-    tensor2 : ~einsteinpy.symbolic.BaseRelativityTensor
+    tensor1 : ~einsteinpy.symbolic.tensors.tensor.BaseRelativityTensor
+    tensor2 : ~einsteinpy.symbolic.tensors.tensor.BaseRelativityTensor
     i : int, optional
         contract ``i``th index of ``tensor1``
     j : int, optional
@@ -100,6 +100,7 @@ def tensor_product(tensor1, tensor2, i=None, j=None):
                 % (tensor1.config[i], tensor2.config[j])
             )
 
+        
         product = simplify(tensorcontraction(product, (i, len(tensor1.config) + j)))
 
         con = tensor1.config[:i] + tensor1.config[i + 1 :]

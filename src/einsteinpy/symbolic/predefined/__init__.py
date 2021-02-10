@@ -11,3 +11,23 @@ from .godel import Godel
 from .janis_newman_winicour import JanisNewmanWinicour
 from .minkowski import Minkowski, MinkowskiCartesian, MinkowskiPolar
 from .vacuum_solutions import Kerr, KerrNewman, ReissnerNordstorm, Schwarzschild
+
+__all__ = ['AlcubierreWarp','BarriolaVilekin',
+'BertottiKasner',
+'BesselGravitationalWave',
+'CMetric',
+'Davidson',
+'AntiDeSitter',
+'AntiDeSitterStatic',
+'DeSitter',
+'Ernst',
+'find',
+'Godel',
+'JanisNewmanWinicour',
+'Minkowski',
+'MinkowskiCartesian',
+'MinkowskiPolar',
+'Kerr',
+'KerrNewman',
+'ReissnerNordstorm',
+'Schwarzschild']
