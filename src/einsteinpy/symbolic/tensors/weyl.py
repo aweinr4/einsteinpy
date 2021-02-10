@@ -319,7 +319,7 @@ class DualWeylTensor(BaseRelativityTensor):
             Metric Tensor
 
         """
-        weyl = WeylTensor.from_metric(riemann)
+        weyl = WeylTensor.from_riemann(riemann)
         return cls.from_weyltensor(weyl, parent_metric=parent_metric)
 
     
