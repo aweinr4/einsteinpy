@@ -78,26 +78,43 @@ def perm_parity(arr):
         return 1
 
 def unique(tensor,return_index = False):
-    '''
-    used to extract all non zero values from a tensor, if return index is true then indices are returned along with values
-    '''
+    """
+    Function to extract all unique non zero values from a tensor, if return index is true then indices are returned along with values.
+
+    Parameters
+    ----------
+    tensor : ~einsteinpy.symbolic.tensors.tensor.BaseRelativityTensor
+        any base relativity tensor
+    return_index: ~boolean
+        if true then a list of indices that have each particular value will be included in output
+
+    Returns
+    -------
+    ~List or sequence of lists
+
+
+    """
+    #np array easier to manipulate
     all_values = np.asarray(tensor.tensor())
     shape = all_values.shape
     indices = []
     vals = []
     for n,i in enumerate(all_values.flatten()):
+        #ignore if value is 0
         if i == 0:
             pass
         else:
+            index = [*np.unravel_index(n,shape = shape)]
             is_unique = True
-            for j in vals:
+            for valn,j in enumerate(vals):
+                #check if value has already been found
                 if sympy.simplify(i==j):
                     is_unique = False
+                    indices[valn].append(index)
                     break
             if is_unique:
-                index = [*np.unravel_index(n,shape = shape)]
+                indices.append([index])
                 vals.append(i)
-                indices.append(index)
     if return_index:
         
         return vals,indices
