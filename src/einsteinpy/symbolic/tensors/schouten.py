@@ -48,6 +48,43 @@ class SchoutenTensor(BaseRelativityTensor):
             raise ValueError("config should be of length {}".format(self._order))
 
     @classmethod
+    def from_riccitensor(cls, t_ricci,parent_metric = None):
+        """
+        Get Schouten tensor calculated from a ricci tensor
+
+        Parameters
+        ----------
+        metric : ~einsteinpy.symbolic.tensors.ricci.RicciTensor
+            Ricci Tensor from which Christoffel Symbols are to be calculated
+
+        Raises
+        ------
+        ValueError
+            Raised when the dimension of the tensor is less than 3
+
+        """
+
+        if not parent_metric:
+            metric = t_ricci.parent_metric
+        else:
+            metric = parent_metric
+
+        
+
+        if metric.dims >= 3:
+            if not t_ricci.config == 'll':
+                t_ricci = t_ricci.change_config('ll')
+
+            r_scalar = RicciScalar.from_riccitensor(t_ricci, parent_metric=None)
+            dims = metric.dims
+            t_schouten = (
+                t_ricci.tensor()
+                - (r_scalar.expr * metric.lower_config().tensor() / (2 * (dims - 1)))
+            ) / (dims - 2)
+            return cls(t_schouten, metric.syms, config="ll", parent_metric=metric)
+        raise ValueError("Dimension of the space/space-time should be 3 or more")
+
+    @classmethod
     def from_metric(cls, metric):
         """
         Get Schouten tensor calculated from a metric tensor
@@ -65,13 +102,7 @@ class SchoutenTensor(BaseRelativityTensor):
         """
         if metric.dims >= 3:
             t_ricci = RicciTensor.from_metric(metric)
-            r_scalar = RicciScalar.from_riccitensor(t_ricci, parent_metric=None)
-            dims = metric.dims
-            t_schouten = (
-                t_ricci.tensor()
-                - (r_scalar.expr * metric.lower_config().tensor() / (2 * (dims - 1)))
-            ) / (dims - 2)
-            return cls(t_schouten, metric.syms, config="ll", parent_metric=metric)
+            return cls.from_riccitensor(t_ricci, parent_metric=metric)
         raise ValueError("Dimension of the space/space-time should be 3 or more")
 
     def change_config(self, newconfig="ul", metric=None):

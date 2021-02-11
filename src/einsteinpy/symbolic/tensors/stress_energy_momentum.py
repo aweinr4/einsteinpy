@@ -54,14 +54,26 @@ class StressEnergyMomentumTensor(BaseRelativityTensor):
             raise ValueError("config should be of length {}".format(self._order))
 
     @classmethod
-    def from_metric(cls, metric):
-        t_einstein = EinsteinTensor.from_metric(metric)
+    def from_einsteintensor(cls, einst,parent_metric = None):
+        if not parent_metric:
+            metric = einst.parent_metric
+        else:
+            metric = einst
+
+        if not einst.config == 'll':
+            einst = einst.change_config('ll')
         stress_tensor = (
             c ** 4
             / (8 * np.pi * G)
-            * (t_einstein.tensor() - Cosmo_Const * metric.lower_config().tensor())
+            * (einst.tensor() - Cosmo_Const * metric.lower_config().tensor())
         )
         return cls(stress_tensor, metric.syms, config="ll", parent_metric=metric)
+
+    @classmethod
+    def from_metric(cls, metric):
+        t_einstein = EinsteinTensor.from_metric(metric)
+        
+        return cls.from_einsteintensor(t_einstein, parent_metric=metric)
 
     def change_config(self, newconfig="ul", metric=None):
         """
