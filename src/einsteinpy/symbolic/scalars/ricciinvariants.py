@@ -9,33 +9,9 @@ class RicciScalar(BaseRelativityScalar):
     Class for defining Ricci Scalar
     """
 
-    def __init__(self, expr, syms, parent_metric=None):
-        """
-        Constructor and Initializer
-
-        Parameters
-        ----------
-        expr : ~sympy.core.expr.Expr or numbers.Number
-            Raw sympy expression
-        syms : tuple or list
-            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the Ricci Scalar.
-            Defaults to None.
-
-        Raises
-        ------
-        TypeError
-            Raised when syms is not a list or tuple
-
-        """
-        super(RicciScalar, self).__init__(
-            expr=expr,
-            syms=syms,
-            parent_metric=parent_metric,
-            name="RicciScalar",
-        )
-        self._order = 0
+    _default = {
+        'name':'RicciScalar'
+    }
 
 
     @classmethod
@@ -123,33 +99,9 @@ class SecondRicciInvariant(RicciScalar):
     """
     Class for defining Second Ricci Invariant, use Ricci Scalar as parent because from_christoffels and from_riemann will be same
     """
-
-    def __init__(self, expr, syms, parent_metric=None):
-        """
-        Constructor and Initializer
-
-        Parameters
-        ----------
-        expr : ~sympy.core.expr.Expr or numbers.Number
-            Raw sympy expression
-        syms : tuple or list
-            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the Ricci Scalar.
-            Defaults to None.
-
-        Raises
-        ------
-        TypeError
-            Raised when syms is not a list or tuple
-
-        """
-        super(SecondRicciInvariant, self).__init__(
-            expr=expr,
-            syms=syms,
-            parent_metric=parent_metric,
-        )
-        self.name = 'SecondRicciInvariant'
+    _default = {
+        'name':'SecondRicciInvariant'
+    }
 
 
     @classmethod
@@ -204,32 +156,9 @@ class ThirdRicciInvariant(RicciScalar):
     Class for defining Third Ricci Invariant
     """
 
-    def __init__(self, expr, syms, parent_metric=None):
-        """
-        Constructor and Initializer
-
-        Parameters
-        ----------
-        expr : ~sympy.core.expr.Expr or numbers.Number
-            Raw sympy expression
-        syms : tuple or list
-            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the Ricci Scalar.
-            Defaults to None.
-
-        Raises
-        ------
-        TypeError
-            Raised when syms is not a list or tuple
-
-        """
-        super(ThirdRicciInvariant, self).__init__(
-            expr=expr,
-            syms=syms,
-            parent_metric=parent_metric,
-        )
-        self.name = 'ThirdRicciInvariant'
+    _default = {
+        'name':'ThirdRicciInvariant'
+    }
 
 
     @classmethod
@@ -282,33 +211,9 @@ class FourthRicciInvariant(RicciScalar):
     Class for defining Fourth Ricci Invariant
     """
 
-    def __init__(self, expr, syms, parent_metric=None):
-        """
-        Constructor and Initializer
-
-        Parameters
-        ----------
-        expr : ~sympy.core.expr.Expr or numbers.Number
-            Raw sympy expression
-        syms : tuple or list
-            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the Ricci Scalar.
-            Defaults to None.
-
-        Raises
-        ------
-        TypeError
-            Raised when syms is not a list or tuple
-
-        """
-        super(FourthRicciInvariant, self).__init__(
-            expr=expr,
-            syms=syms,
-            parent_metric=parent_metric,
-        )
-        self.name = 'FourthRicciInvariant'
-
+    _default = {
+        'name':'FourthRicciInvariant'
+    }
 
     @classmethod
     def from_riccitensor(cls, riccitensor, parent_metric=None):

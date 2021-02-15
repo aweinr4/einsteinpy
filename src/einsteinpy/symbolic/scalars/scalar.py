@@ -123,10 +123,18 @@ class BaseRelativityScalar(Scalar):
         free variables in the scalar expression other than the variables describing space-time axis.
     functions : list
         Undefined functions in the scalar expression.
+
+    **kwargs
+    ----------
     name : str or None
         Name of the scalar. Defaults to "GenericScalar".
 
     """
+
+    """
+    default properties for quantity if arguments not included
+    """
+    _default = {'name':'GenericScalar'}
 
     def __init__(
         self,
@@ -135,7 +143,7 @@ class BaseRelativityScalar(Scalar):
         parent_metric=None,
         variables=list(),
         functions=list(),
-        name="GenericScalar",
+        **kwargs
     ):
         """
         Constructor and Initializer
@@ -169,6 +177,7 @@ class BaseRelativityScalar(Scalar):
             Raised when argument parent_metric does not belong to MetricTensor class and isn't None.
 
         """
+        name = kwargs.get('name',self._default['name'])
         super(BaseRelativityScalar, self).__init__(expr=expr, name=name)
 
         if not isinstance(parent_metric,(MetricTensor,type(None))):

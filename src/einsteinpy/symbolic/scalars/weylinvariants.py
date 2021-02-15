@@ -10,33 +10,9 @@ class FirstWeylInvariant(BaseRelativityScalar):
     Class for defining First Weyl Invariant
     """
 
-    def __init__(self, expr, syms, parent_metric=None):
-        """
-        Constructor and Initializer
-
-        Parameters
-        ----------
-        expr : ~sympy.core.expr.Expr or numbers.Number
-            Raw sympy expression
-        syms : tuple or list
-            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the First Weyl Invariant.
-            Defaults to None.
-
-        Raises
-        ------
-        TypeError
-            Raised when syms is not a list or tuple
-
-        """
-        super(FirstWeylInvariant, self).__init__(
-            expr=expr,
-            syms=syms,
-            parent_metric=parent_metric,
-            name="FirstWeylInvariant",
-        )
-
+    _default = {
+        'name':'FirstWeylInvariant'
+    }
 
     @classmethod
     def from_weyltensor(cls, weyl, parent_metric=None):
@@ -130,32 +106,9 @@ class SecondWeylInvariant(FirstWeylInvariant):
     Class for defining Second Weyl Invariant
     """
 
-    def __init__(self, expr, syms, parent_metric=None):
-        """
-        Constructor and Initializer
-
-        Parameters
-        ----------
-        expr : ~sympy.core.expr.Expr or numbers.Number
-            Raw sympy expression
-        syms : tuple or list
-            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the Second Weyl Invariant.
-            Defaults to None.
-
-        Raises
-        ------
-        TypeError
-            Raised when syms is not a list or tuple
-
-        """
-        super(SecondWeylInvariant, self).__init__(
-            expr=expr,
-            syms=syms,
-            parent_metric=parent_metric,
-        )
-        self.name="SecondWeylInvariant"
+    _default = {
+        'name':'SecondWeylInvariant'
+    }
 
     @classmethod
     def from_weyltensor(cls, weyl, parent_metric=None):
@@ -206,32 +159,9 @@ class ThirdWeylInvariant(FirstWeylInvariant):
     Class for defining Third Weyl Invariant
     """
 
-    def __init__(self, expr, syms, parent_metric=None):
-        """
-        Constructor and Initializer
-
-        Parameters
-        ----------
-        expr : ~sympy.core.expr.Expr or numbers.Number
-            Raw sympy expression
-        syms : tuple or list
-            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the Third Weyl Invariant.
-            Defaults to None.
-
-        Raises
-        ------
-        TypeError
-            Raised when syms is not a list or tuple
-
-        """
-        super(ThirdWeylInvariant, self).__init__(
-            expr=expr,
-            syms=syms,
-            parent_metric=parent_metric,
-        )
-        self.name="ThirdWeylInvariant"
+    _default = {
+        'name':'ThirdWeylInvariant'
+    }
 
     @classmethod
     def from_weyltensor(cls, weyl, parent_metric=None):
@@ -280,33 +210,9 @@ class FourthWeylInvariant(FirstWeylInvariant):
     """
     Class for defining Fourth Weyl Invariant
     """
-
-    def __init__(self, expr, syms, parent_metric=None):
-        """
-        Constructor and Initializer
-
-        Parameters
-        ----------
-        expr : ~sympy.core.expr.Expr or numbers.Number
-            Raw sympy expression
-        syms : tuple or list
-            Tuple of crucial symbols denoting time-axis, 1st, 2nd, and 3rd axis (t,x1,x2,x3)
-        parent_metric : ~einsteinpy.symbolic.metric.MetricTensor or None
-            Corresponding Metric for the Fourth Weyl Invariant.
-            Defaults to None.
-
-        Raises
-        ------
-        TypeError
-            Raised when syms is not a list or tuple
-
-        """
-        super(FourthWeylInvariant, self).__init__(
-            expr=expr,
-            syms=syms,
-            parent_metric=parent_metric,
-        )
-        self.name="FourthWeylInvariant"
+    _default = {
+        'name':'FourthWeylInvariant'
+    }
 
     @classmethod
     def from_weyltensor(cls, weyl, parent_metric=None):
